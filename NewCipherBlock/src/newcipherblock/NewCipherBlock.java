@@ -19,6 +19,43 @@ public class NewCipherBlock {
      */
     public static void main(String[] args) {
         // TODO code application logic here
+        byte[][] sbox = BlockProcessor.getSBox();
+        System.out.println("SBOX: ");
+        printMatrixByte(sbox);
+        
+        byte key[]= new byte[16];
+        byte a=0;
+        for(int i=0; i<16;i++) {
+            key[i] = a;
+            a++;
+        }
+        
+        byte[][] left = new byte[2][4];
+        byte[][] right = new byte[2][4];
+        
+        int x = 0;
+        for(int i=0; i<2; i++) {
+            for(int j=0; j<4; j++) {
+                left[i][j] = (byte)(x&0xFF);
+                right[i][j] = (byte)(16-x);
+                x++;
+            }
+        }
+        
+        KeyGenerator kg = new KeyGenerator(key);
+        
+        Feistel f = new Feistel();
+        
+        BlockProcessor bp = new BlockProcessor();
+        System.out.println("Awal : ");
+        printMatrixByte(kg.getKeyMatrix());
+        System.out.println("\nAkhir : ");
+        //printMatrixByte(bp.process(kg.getKeyMatrix(), key));
+        
+        
+    }
+    
+    public static void coba() {
         byte [] b = new byte[16];
         byte [] plain = new byte[16];
         for(int i=0; i<b.length; i++)
@@ -65,6 +102,15 @@ public class NewCipherBlock {
                 System.out.print( (lb&0xFF) + " ");
             System.out.println();
         }
+    }
+    
+    public static void printMatrixByte(byte[][] matriks) {
+        for(byte[] ab : matriks) {
+            for(byte b : ab)
+                System.out.printf( "%02x ", b);
+            System.out.println();
+        }
+        
     }
     
 }

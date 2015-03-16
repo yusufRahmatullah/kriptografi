@@ -16,8 +16,8 @@ public class KeyGenerator {
     /* Variabel-variabel statik */
     public static final int SHIFT_ROW = 0;
     public static final int SHIFT_COLUMN = 1;
-    public static final int SHIFT_LEFT = -1;
-    public static final int SHIFT_RIGHT = 1;
+    public static final int SHIFT_LEFT = 1;
+    public static final int SHIFT_RIGHT = -1;
     public static final int SHIFT_UP = 1;
     public static final int SHIFT_DOWN = -1;
     
@@ -55,14 +55,20 @@ public class KeyGenerator {
         
         /* Transpos diagonal & shift kiri */
         diagonalTranspose();
+//        System.out.println("\nDiagonal transpos:");
+//        printHexMatrix();
         shiftKey(SHIFT_ROW, SHIFT_LEFT);
+//        System.out.println("\nShift:");
+//        printHexMatrix();
         
         /* Substitusi baris pertama */
         sbox = BlockProcessor.getSBox();
         for(int i=0; i<keyMatrix[0].length; i++) {
-            int row = keyMatrix[0][i] & 0xF, col = (keyMatrix[0][i] >> 4) & 0xF;
+            int col = keyMatrix[0][i] & 0xF, row = (keyMatrix[0][i] >> 4) & 0xF;
             keyMatrix[0][i] = sbox[row][col];
         }
+//        System.out.println("\nSubstitusi");
+//        printHexMatrix();
         
         /* Operasi XOR */
         for(int i=1; i<keyMatrix.length; i++)
@@ -126,6 +132,13 @@ public class KeyGenerator {
         for(byte[] a : keyMatrix) {
             for(byte b : a)
                 System.out.print( (char)b + " ");
+            System.out.println();
+        }
+    }
+    public void printHexMatrix() {
+        for(byte[] a : keyMatrix) {
+            for(byte b : a)
+                System.out.printf( "%02x ", b);
             System.out.println();
         }
     }
