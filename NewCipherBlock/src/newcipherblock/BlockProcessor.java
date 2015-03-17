@@ -10,10 +10,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-<<<<<<< HEAD
 import java.util.ArrayList;
-=======
->>>>>>> 33f024ceb9d2139cb1a9335f96485249cca823be
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -49,11 +46,7 @@ public class BlockProcessor {
             }
         }
     }
-<<<<<<< HEAD
     private static void buildReverseSBox() {
-=======
-    private static void buildReverseSBox(){
->>>>>>> 33f024ceb9d2139cb1a9335f96485249cca823be
         FileInputStream fis = null;
         try {
             fis = new FileInputStream(new File("rsbox.data"));
@@ -81,16 +74,9 @@ public class BlockProcessor {
             buildSBox();
         return SBOX;
     }
-<<<<<<< HEAD
     public static byte[][] getReverseSBox() {
         if (ReverseSBOX == null)
             buildReverseSBox();
-=======
-    public static byte[][] getReverseSBox(){
-        if(ReverseSBOX == null){
-            buildReverseSBox();
-        }
->>>>>>> 33f024ceb9d2139cb1a9335f96485249cca823be
         return ReverseSBOX;
     }
     

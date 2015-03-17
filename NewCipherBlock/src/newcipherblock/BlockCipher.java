@@ -26,10 +26,38 @@ public class BlockCipher {
         return instance;
     }
     
-    public static byte[] electronicCodeBook(byte [] plain, byte[] key){
-        byte[] retval = new byte[plain.length];
-        int nBlock = (int)Math.ceil(plain.length/16);
-        
+    /* Mode ECB */
+    public static byte[] electronicCodeBook(byte [] plain, byte[] key) {
+        int nBlock = (int)Math.ceil(((double)plain.length)/16);
+        byte[] retval = new byte[nBlock*16];
+        int offset = 0;
+        BlockProcessor bp = new BlockProcessor(key, 16);
+        byte[] input = new byte[16];
+        while (offset < plain.length) {
+            if (offset+15 < plain.length) {
+                System.arraycopy(plain, offset, input, 0, 16);
+                System.arraycopy(bp.process(input), 0, retval, offset, 16);
+            } else {
+                int sisa = (plain.length-offset);
+                System.arraycopy(plain, offset, input, 0, sisa);
+                for(int i=sisa; i<16; i++)
+                    input[i] = 0;
+                System.arraycopy(bp.process(input), 0, retval, offset, 16);
+            }
+            offset += 16;
+        }
+        return retval;
+    }
+    public byte[] decryptECB(byte [] cipher, byte[] key) {
+        byte[] retval = new byte[cipher.length];
+        int offset = 0;
+        BlockProcessor bp = new BlockProcessor(key, 16);
+        byte[] input = new byte[16];
+        while (offset < cipher.length) {
+            System.arraycopy(cipher, offset, input, 0, 16);
+            System.arraycopy(bp.inversProcess(input), 0, retval, offset, 16);
+            offset += 16;
+        }
         return retval;
     }
     

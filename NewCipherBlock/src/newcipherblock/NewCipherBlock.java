@@ -6,8 +6,16 @@
 
 package newcipherblock;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -33,10 +41,10 @@ public class NewCipherBlock {
         }
         
         /* Plain */
-        byte plain[] = new byte[16];
+        byte plain[] = new byte[24];
         a=0;
-        for(int i=0; i<16;i++) {
-            plain[i] = (byte)(0xF - a);
+        for(int i=0; i<24; i++) {
+            plain[i] = (byte)((a%264) & 0xFF);
             a++;
         }
         
@@ -53,20 +61,67 @@ public class NewCipherBlock {
         }
         
         /* Coba */
-        System.out.println("Plain awal :");
-        printArrayByte(plain);
-        BlockProcessor bp = new BlockProcessor(key, 16);
-        byte[] cipher = bp.process(plain);
-        System.out.println("\nCipher :");
-        printArrayByte(cipher);
-        byte[] plainLagi = bp.inversProcess(cipher);
-        System.out.println("\nPlain lagi :");
-        printArrayByte(plainLagi);
+//        System.out.println("Plain awal :");
+//        printArrayByte(plain);
+//        BlockCipher bc = BlockCipher.getInstance();
+//        byte[] cipher = bc.electronicCodeBook(plain, key);
+//        System.out.println("\nCipher :");
+//        printArrayByte(cipher);
+//        byte[] plainLagi = bc.decryptECB(cipher, key);
+//        System.out.println("\nPlain lagi :");
+//        printArrayByte(plainLagi);
+        byte[] konci = "namasayakhaidzir".getBytes();
+        enkripFile(konci);
+        dekripFile(konci);
     }
     
-    public static void coba(int[] array) {
-        for(int i=0; i<array.length; i++)
-            array[i]++;
+    public static void coba() {
+        byte[] key = "NAMASAYAKHAIDZIR".getBytes();
+        BlockCipher bc = BlockCipher.getInstance();
+        File filePlain = new File("C:\\Users\\user\\Desktop\\plain.txt");
+        File fileCipher = new File("C:\\Users\\user\\Desktop\\cipher.txt");
+        File filePlain2 = new File("C:\\Users\\user\\Desktop\\plain2.txt");
+        Path path = Paths.get(filePlain.getAbsolutePath());
+        try {
+            byte[] plain = Files.readAllBytes(path);
+            byte[] cipher = bc.electronicCodeBook(plain, key);
+            FileOutputStream fos = new FileOutputStream(fileCipher);
+            fos.write(cipher);
+            byte[] plain2 = bc.decryptECB(cipher, key);
+            FileOutputStream fos2 = new FileOutputStream(filePlain2);
+            fos2.write(plain2);
+        } catch (IOException ex) {
+            
+        }
+    }
+    
+    private static void enkripFile(byte[] key) {
+        BlockCipher bc = BlockCipher.getInstance();
+        File filePlain = new File("C:\\Users\\user\\Desktop\\coba.bmp");
+        File fileCipher = new File("C:\\Users\\user\\Desktop\\cipher.bmp");
+        Path path = Paths.get(filePlain.getAbsolutePath());
+        try {
+            byte[] plain = Files.readAllBytes(path);
+            byte[] cipher = bc.electronicCodeBook(plain, key);
+            FileOutputStream fos = new FileOutputStream(fileCipher);
+            fos.write(cipher);
+        } catch (IOException ex) {
+            
+        }
+    }
+    private static void dekripFile(byte[] key) {
+        BlockCipher bc = BlockCipher.getInstance();
+        File fileCipher = new File("C:\\Users\\user\\Desktop\\cipher.bmp");
+        File filePlain2 = new File("C:\\Users\\user\\Desktop\\plain2.bmp");
+        Path path = Paths.get(fileCipher.getAbsolutePath());
+        try {
+            byte[] cipher = Files.readAllBytes(path);
+            byte[] plain2 = bc.decryptECB(cipher, key);
+            FileOutputStream fos2 = new FileOutputStream(filePlain2);
+            fos2.write(plain2);
+        } catch (IOException ex) {
+            
+        }
     }
     
     public static void printMatrixByte(byte[][] matriks) {
@@ -75,7 +130,6 @@ public class NewCipherBlock {
                 System.out.printf( "%02x ", b);
             System.out.println();
         }
-        
     }
     
     public static void printArrayByte(byte[] array) {
