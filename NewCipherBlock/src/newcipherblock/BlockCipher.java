@@ -68,11 +68,120 @@ public class BlockCipher {
     
     public static byte[] cipherFeedback(byte [] plain, byte[] key){
         byte[] retval = new byte[plain.length];
+        int offset = 0;
+        byte[] input = new byte[16];
+        byte[] stream = new byte[16];
+        
+        BlockProcessor bp = new BlockProcessor(key, 16);
+        //inisialisasi IV
+        for(int i=0; i<16; i++){
+            input[i] = 0;
+        }
+        while(offset < plain.length){
+            if(offset+15 < plain.length){
+                System.arraycopy(plain, offset, stream, 0, 16);
+                stream = xorTwoArray(bp.process(input), stream);
+                System.arraycopy(stream, 0, retval, offset, 16);
+                System.arraycopy(stream, 0, input, 0, 16);
+            }else{
+                int sisa = plain.length - offset;
+                System.arraycopy(plain, offset, stream, 0, sisa);
+                for(int i=sisa; i<16; i++){
+                    stream[i] = 0;
+                }
+                stream = xorTwoArray(bp.process(input), stream);
+                System.arraycopy(stream, 0, retval, offset, 16);
+                System.arraycopy(stream, 0, input, 0, 16);
+            }
+            offset+=16;
+        }
+        return retval;
+    }
+    
+    public static byte[] decryptCFB(byte[] cipher, byte[] key){
+        byte[] retval = new byte[cipher.length];
+        byte[] input = new byte[16];
+        byte[] stream = new byte[16];
+        int offset = 0;
+        
+        //inisialisasi IV
+        for(int i=0; i<16; i++){
+            input[i] = 0;
+        }
+        BlockProcessor bp = new BlockProcessor(key, 16);
+        while(offset < cipher.length){
+            System.arraycopy(cipher, offset, stream, 0, 16);
+            stream = xorTwoArray(bp.inversProcess(input), stream);
+            System.arraycopy(stream, 0, retval, offset, 16);
+            System.arraycopy(stream, 0, input, 0, 16);
+            offset+=16;
+        }
         return retval;
     }
     
     public static byte[] outputFeedback(byte [] plain, byte[] key){
         byte[] retval = new byte[plain.length];
+        int offset = 0;
+        byte[] input = new byte[16];
+        byte[] stream = new byte[16];
+        byte[] temp = new byte[16];
+        
+        BlockProcessor bp = new BlockProcessor(key, 16);
+        //inisialisasi IV
+        for(int i=0; i<16; i++){
+            input[i] = 0;
+        }
+        while(offset < plain.length){
+            if(offset+15 < plain.length){
+                temp = bp.process(input);
+                System.arraycopy(temp, 0, input, 0, 16);
+                System.arraycopy(plain, offset, stream, 0, 16);
+                stream = xorTwoArray(temp, stream);
+                System.arraycopy(stream, 0, retval, offset, 16);
+            }else{
+                int sisa = plain.length - offset;
+                temp = bp.process(input);
+                System.arraycopy(temp, 0, input, 0, 16);
+                System.arraycopy(plain, offset, stream, 0, sisa);
+                for(int i=sisa; i<16; i++){
+                    stream[i] = 0;
+                }
+                stream = xorTwoArray(temp, stream);
+                System.arraycopy(stream, 0, retval, offset, 16);
+            }
+            offset+=16;
+        }
+        return retval;
+    }
+    
+    public static byte[] decryptOFB(byte[] cipher, byte[] key){
+        byte[] retval = new byte[cipher.length];
+        byte[] input = new byte[16];
+        byte[] stream = new byte[16];
+        byte[] temp = new byte[16];
+        int offset = 0;
+        BlockProcessor bp = new BlockProcessor(key, 16);
+        
+        //inisialisasi IV
+        for(int i=0; i<16; i++){
+            input[i] = 0;
+        }
+        while(offset < cipher.length){
+            temp = bp.inversProcess(input);
+            System.arraycopy(temp, 0, input, 0, 16);
+            System.arraycopy(cipher, offset, stream, 0, 16);
+            stream = xorTwoArray(temp, stream);
+            System.arraycopy(stream, 0, retval, offset, 16);
+            offset+=16;
+        }
+        return retval;
+    }
+    
+    private static byte[] xorTwoArray(byte[] input1, byte[] input2){
+        byte[] retval = new byte[input1.length];
+        for(int i=0; i<input1.length; i++){
+            retval[i] = (byte) (input1[i] ^ input2[i]);
+        }
         return retval;
     }
 }
