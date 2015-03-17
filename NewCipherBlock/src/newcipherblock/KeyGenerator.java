@@ -62,24 +62,24 @@ public class KeyGenerator {
         }
     }
     /* Generate key */
-    public byte[][] generate(byte[][] keyMatrix) {
+    private byte[][] generate(byte[][] keyMatrix) {
         /* Kunci lama */
         byte[][]  old, sbox;
         old = new byte[keyMatrix.length][keyMatrix[0].length];
         for(int i=0; i<old.length; i++)
             old[i] = Arrays.copyOf(keyMatrix[i], keyMatrix[i].length);
-        System.out.println("\nKunci awal:");
-        printHexMatrix(keyMatrix);
+//        System.out.println("\nKunci awal:");
+//        printHexMatrix(keyMatrix);
         
         /* Transpos diagonal */
         keyMatrix = diagonalTranspose(keyMatrix);
-        System.out.println("\nDiagonal transpos:");
-        printHexMatrix(keyMatrix);
+//        System.out.println("\nDiagonal transpos:");
+//        printHexMatrix(keyMatrix);
         
         /* Shift kiri */
         keyMatrix = shiftKey(keyMatrix, SHIFT_ROW, SHIFT_LEFT);
-        System.out.println("\nShift:");
-        printHexMatrix(keyMatrix);
+//        System.out.println("\nShift:");
+//        printHexMatrix(keyMatrix);
         
         /* Substitusi baris pertama */
         sbox = BlockProcessor.getSBox();
@@ -87,15 +87,15 @@ public class KeyGenerator {
             int col = keyMatrix[0][i] & 0xF, row = (keyMatrix[0][i] >> 4) & 0xF;
             keyMatrix[0][i] = sbox[row][col];
         }
-        System.out.println("\nSubstitusi");
-        printHexMatrix(keyMatrix);
+//        System.out.println("\nSubstitusi");
+//        printHexMatrix(keyMatrix);
         
         /* Operasi XOR */
         for(int i=1; i<keyMatrix.length; i++)
             for(int j=0; j<keyMatrix[i].length; j++)
                 keyMatrix[i][j] =(byte) (keyMatrix[i][j] ^ old[i][j] ^ keyMatrix[0][j]);
-        System.out.println("\nXOR");
-        printHexMatrix(keyMatrix);
+//        System.out.println("\nXOR");
+//        printHexMatrix(keyMatrix);
         
         return keyMatrix;
     }
