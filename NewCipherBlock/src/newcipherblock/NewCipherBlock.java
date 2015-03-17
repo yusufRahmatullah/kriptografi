@@ -7,6 +7,7 @@
 package newcipherblock;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  *
@@ -21,8 +22,9 @@ public class NewCipherBlock {
         // TODO code application logic here
         byte[][] sbox = BlockProcessor.getSBox();
         System.out.println("SBOX: ");
-        printMatrixByte(sbox);
+//        printMatrixByte(sbox);
         
+        /* Key */
         byte key[]= new byte[16];
         byte a=0;
         for(int i=0; i<16;i++) {
@@ -30,9 +32,17 @@ public class NewCipherBlock {
             a++;
         }
         
-        byte[][] left = new byte[2][4];
-        byte[][] right = new byte[2][4];
+        /* Plain */
+        byte plain[] = new byte[16];
+        a=0;
+        for(int i=0; i<16;i++) {
+            plain[i] = (byte)(0xF - a);
+            a++;
+        }
         
+        /* Left & right */
+        byte[][] left = new byte[2][4];
+        byte[][] right = new byte[2][4];        
         int x = 0;
         for(int i=0; i<2; i++) {
             for(int j=0; j<4; j++) {
@@ -42,66 +52,14 @@ public class NewCipherBlock {
             }
         }
         
-        KeyGenerator kg = new KeyGenerator(key);
-        
-        Feistel f = new Feistel();
-        
+        /* Coba */
         BlockProcessor bp = new BlockProcessor();
-        System.out.println("Awal : ");
-        printMatrixByte(kg.getKeyMatrix());
-        System.out.println("\nAkhir : ");
-        //printMatrixByte(bp.process(kg.getKeyMatrix(), key));
-        
-        
+        bp.process(plain, key);
     }
     
-    public static void coba() {
-        byte [] b = new byte[16];
-        byte [] plain = new byte[16];
-        for(int i=0; i<b.length; i++)
-            b[i] = (byte)( (15-i) & 0xFF );
-        for(int i=0; i<plain.length; i++)
-            plain[i] = (byte)( i & 0xFF );
-        
-        byte [][] left = new byte[2][4];
-        byte [][] right = new byte[2][4];
-        for(int i=0; i<2; i++) {
-            System.arraycopy(plain, i*4, right[i], 0, 4);
-            System.arraycopy(plain, i*4+8, left[i], 0, 4);
-        }
-        
-        KeyGenerator key = new KeyGenerator(b);
-        Feistel feistel = new Feistel();
-        
-        /* Print */
-        System.out.println("\nLeft right lama : ");
-        for(byte la[] : left) {
-            for(byte lb : la)
-                System.out.print( (lb&0xFF) + " ");
-            System.out.println();
-        }
-        System.out.println();
-        for(byte ra[] : right) {
-            for(byte rb : ra)
-                System.out.print( (rb&0xFF) + " ");
-            System.out.println();
-        }
-//        ArrayList<byte[][]> hasil = feistel.feistelUnit(key.getKeyMatrix(), left, right, 1);
-        byte[][] hasil = feistel.fFunction(key.getKeyMatrix(), right, 2);
-        
-        /* Print */
-        System.out.println("\nLeft right baru : ");
-        for(byte la[] : hasil) {
-            for(byte lb : la)
-                System.out.print( (lb&0xFF) + " ");
-            System.out.println();
-        }
-        System.out.println();
-        for(byte la[] : left) {
-            for(byte lb : la)
-                System.out.print( (lb&0xFF) + " ");
-            System.out.println();
-        }
+    public static void coba(int[] array) {
+        for(int i=0; i<array.length; i++)
+            array[i]++;
     }
     
     public static void printMatrixByte(byte[][] matriks) {
@@ -111,6 +69,13 @@ public class NewCipherBlock {
             System.out.println();
         }
         
+    }
+    
+    public static void printArrayByte(byte[] array) {
+        for(byte b : array) {
+            System.out.printf("%02x ", b);
+        }
+        System.out.println();
     }
     
 }

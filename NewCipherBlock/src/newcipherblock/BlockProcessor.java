@@ -30,17 +30,12 @@ public class BlockProcessor {
     }
     
     /* Atribut */
-    private byte[] key, plain;
-    private byte[][] cipher;
     
     /* Konstruktor */
     public BlockProcessor(){
     }
-    public BlockProcessor(byte[] plain, byte[] key) {
-        this.key = key;
-        this.plain = plain;
-    }
     
+    /* Proses cipherblokm menghasilkan cipher */
     public byte[] process(byte[] plain, byte[] key) {
         /* Ubah plain menjadi matriks */
         byte [][] matriks = convertToMatrix(plain);
@@ -60,8 +55,8 @@ public class BlockProcessor {
         }
         
         /* Proses dalam feistel */
-        Feistel feistel = new Feistel();
-        KeyGenerator keygen = new KeyGenerator(key);
+        Feistel feistel = new Feistel(1);
+        KeyGenerator keygen = new KeyGenerator(key, 1);
         matriks = feistel.iterateProcess(left, right, keygen);
         
         /* Proses akhir */
