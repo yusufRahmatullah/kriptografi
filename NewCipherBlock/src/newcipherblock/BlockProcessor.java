@@ -6,6 +6,13 @@
 
 package newcipherblock;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 /**
  *
  * @author user
@@ -14,19 +21,63 @@ public class BlockProcessor {
     
     /* SBOX */
     private static byte[][] SBOX = null;
+    private static byte[][] ReverseSBOX = null;
     private static void buildSBox() {
-        SBOX = new byte[16][16];
-        int a=0;
-        for(int i=0; i<16; i++)
-            for(int j=0; j<16; j++) {
-                SBOX[i][j] = (byte)(a&0xFF);
-                a++;
+        FileInputStream fis = null;
+        try {
+            fis = new FileInputStream(new File("sbox.data"));
+            byte [] temp = new byte[256];
+            fis.read(temp, 0, 256);
+            SBOX = new byte[16][16];
+            for(int i=0; i<16; i++)
+                for(int j=0; j<16; j++) {
+                    SBOX[i][j] = temp[i*16+j];
+                }
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(BlockProcessor.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(BlockProcessor.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            try {
+                fis.close();
+            } catch (IOException ex) {
+                Logger.getLogger(BlockProcessor.class.getName()).log(Level.SEVERE, null, ex);
             }
+        }
+    }
+    private static void buildReverseSBox(){
+        FileInputStream fis = null;
+        try {
+            fis = new FileInputStream(new File("rsbox.data"));
+            byte [] temp = new byte[256];
+            fis.read(temp, 0, 256);
+            ReverseSBOX = new byte[16][16];
+            for(int i=0; i<16; i++)
+                for(int j=0; j<16; j++) {
+                    ReverseSBOX[i][j] = temp[i*16+j];
+                }
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(BlockProcessor.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(BlockProcessor.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            try {
+                fis.close();
+            } catch (IOException ex) {
+                Logger.getLogger(BlockProcessor.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
     }
     public static byte[][] getSBox() {
         if (SBOX == null)
             buildSBox();
         return SBOX;
+    }
+    public static byte[][] getReverseSBox(){
+        if(ReverseSBOX == null){
+            buildReverseSBox();
+        }
+        return ReverseSBOX;
     }
     
     /* Atribut */
