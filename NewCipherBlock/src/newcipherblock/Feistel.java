@@ -21,8 +21,7 @@ public class Feistel {
     }
     
     /* Iterasi proses feistel 16 kali */
-    public byte[][] iterateProcess(byte[][]left, byte[][]right, KeyGenerator key) {
-        byte[][] ret = new byte[left.length+right.length][left[0].length];
+    public ArrayList<byte[][]> iterateProcess(byte[][]left, byte[][]right, KeyGenerator key) {
         ArrayList<byte[][]> process = new ArrayList<>();
         process.add(left);
         process.add(right);
@@ -31,40 +30,21 @@ public class Feistel {
         for(int i=1; i<=iterate; i++)
             process = feistelUnit(key.getGeneratedKey().get(i-1), process.get(0), process.get(1), i);
         
-        /* Menggabung left & right */
-        int row=0;
-        for (byte[][] proces : process) {
-            for (byte[] proce : proces) {
-                ret[row] = proce;
-                row++;
-            }
-        }
-        
-        return ret;
+        return process;
     }
     
-    /****** Belum Beres *******/
-    public byte[][] inversIterateProcess(byte[][]left, byte[][]right, KeyGenerator key) {
-        byte[][] ret = new byte[left.length+right.length][left[0].length];
+    
+    public ArrayList<byte[][]> inversIterateProcess(byte[][]left, byte[][]right, KeyGenerator key) {
         ArrayList<byte[][]> process = new ArrayList<>();
         process.add(left);
         process.add(right);
         
         /* Iterasi */
-        for(int i=1; i<=16; i++) {
-            process = feistelUnit(key.getGeneratedKey().get(i-1), process.get(0), process.get(1), i);
+        for(int i=iterate; i>=1; i--) {
+            process = inversFeistelUnit(key.getGeneratedKey().get(i-1), process.get(0), process.get(1), i);
         }
         
-        /* Menggabung left & right */
-        int row=0;
-        for (byte[][] proces : process) {
-            for (byte[] proce : proces) {
-                ret[row] = proce;
-                row++;
-            }
-        }
-        
-        return ret;
+        return process;
     }
     
     /* Proses yang diiterasi 
@@ -72,9 +52,6 @@ public class Feistel {
                             index 1 = right untuk iterasi selanjutnya
     */
     public ArrayList<byte[][]> feistelUnit(byte[][]keyi, byte[][] left, byte[][]right, int iterate) {
-        ArrayList<byte[][]> ret = new ArrayList<>();
-        ret.add(right);
-        
         /* Fungsi F */
         byte[][] right1 = fFunction(keyi, right, iterate);
         
@@ -86,7 +63,29 @@ public class Feistel {
             right1[i] = temp;
         }
         
+        /* return */
+        ArrayList<byte[][]> ret = new ArrayList<>();
+        ret.add(right);
         ret.add(right1);
+        return ret;
+    }
+    
+    public ArrayList<byte[][]> inversFeistelUnit(byte[][]keyi, byte[][]left, byte[][]right, int iterate) {
+        /* Fungsi F */
+        byte[][] left1 = fFunction(keyi, left, iterate);
+        
+        /* Operasi XOR dengan right */
+        for(int i=0; i<right.length; i++) {
+            byte[] temp = new byte[right[i].length];
+            for(int j=0; j<right[i].length; j++)
+                temp[j] = (byte)(right[i][j] ^ left1[i][j]);
+            left1[i] = temp;
+        }
+        
+        /* return */
+        ArrayList<byte[][]> ret = new ArrayList<>();
+        ret.add(left1);
+        ret.add(left);
         return ret;
     }
     

@@ -22,7 +22,7 @@ public class NewCipherBlock {
         // TODO code application logic here
         byte[][] sbox = BlockProcessor.getSBox();
         System.out.println("SBOX: ");
-//        printMatrixByte(sbox);
+        //printMatrixByte(sbox);
         
         /* Key */
         byte key[]= new byte[16];
@@ -53,8 +53,15 @@ public class NewCipherBlock {
         }
         
         /* Coba */
-        BlockProcessor bp = new BlockProcessor();
-        bp.process(plain, key);
+        System.out.println("Plain awal :");
+        printArrayByte(plain);
+        BlockProcessor bp = new BlockProcessor(key, 16);
+        byte[] cipher = bp.process(plain);
+        System.out.println("\nCipher :");
+        printArrayByte(cipher);
+        byte[] plainLagi = bp.inversProcess(cipher);
+        System.out.println("\nPlain lagi :");
+        printArrayByte(plainLagi);
     }
     
     public static void coba(int[] array) {
