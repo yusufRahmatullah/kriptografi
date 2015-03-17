@@ -28,9 +28,6 @@ public class NewCipherBlock {
      */
     public static void main(String[] args) {
         // TODO code application logic here
-        byte[][] sbox = BlockProcessor.getSBox();
-        System.out.println("SBOX: ");
-        //printMatrixByte(sbox);
         
         /* Key */
         byte key[]= new byte[16];
@@ -41,35 +38,24 @@ public class NewCipherBlock {
         }
         
         /* Plain */
-        byte plain[] = new byte[24];
+        byte plain[] = new byte[32];
         a=0;
-        for(int i=0; i<24; i++) {
+        for(int i=0; i<32; i++) {
             plain[i] = (byte)((a%264) & 0xFF);
             a++;
-        }
-        
-        /* Left & right */
-        byte[][] left = new byte[2][4];
-        byte[][] right = new byte[2][4];        
-        int x = 0;
-        for(int i=0; i<2; i++) {
-            for(int j=0; j<4; j++) {
-                left[i][j] = (byte)(x&0xFF);
-                right[i][j] = (byte)(16-x);
-                x++;
-            }
         }
         
         /* Coba */
 //        System.out.println("Plain awal :");
 //        printArrayByte(plain);
 //        BlockCipher bc = BlockCipher.getInstance();
-//        byte[] cipher = bc.electronicCodeBook(plain, key);
+//        byte[] cipher = bc.cipherBlockChaining(plain, key);
 //        System.out.println("\nCipher :");
 //        printArrayByte(cipher);
-//        byte[] plainLagi = bc.decryptECB(cipher, key);
+//        byte[] plainLagi = bc.decryptCBC(cipher, key);
 //        System.out.println("\nPlain lagi :");
 //        printArrayByte(plainLagi);
+        
         byte[] konci = "namasayakhaidzir".getBytes();
         enkripFile(konci);
         dekripFile(konci);
@@ -102,7 +88,7 @@ public class NewCipherBlock {
         Path path = Paths.get(filePlain.getAbsolutePath());
         try {
             byte[] plain = Files.readAllBytes(path);
-            byte[] cipher = bc.electronicCodeBook(plain, key);
+            byte[] cipher = bc.cipherBlockChaining(plain, key);
             FileOutputStream fos = new FileOutputStream(fileCipher);
             fos.write(cipher);
         } catch (IOException ex) {
@@ -116,7 +102,7 @@ public class NewCipherBlock {
         Path path = Paths.get(fileCipher.getAbsolutePath());
         try {
             byte[] cipher = Files.readAllBytes(path);
-            byte[] plain2 = bc.decryptECB(cipher, key);
+            byte[] plain2 = bc.decryptCBC(cipher, key);
             FileOutputStream fos2 = new FileOutputStream(filePlain2);
             fos2.write(plain2);
         } catch (IOException ex) {
